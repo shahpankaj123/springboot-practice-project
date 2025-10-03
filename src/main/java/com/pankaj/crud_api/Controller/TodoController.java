@@ -7,7 +7,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.pankaj.crud_api.Services.TodoServices;
 import com.pankaj.crud_api.dto.TodoDto;
+import com.pankaj.crud_api.dto.TodoResponseDto;
+import com.pankaj.crud_api.dto.UserDto;
 import com.pankaj.crud_api.models.Todo;
+
+import jakarta.validation.Valid;
+
 import org.springframework.web.bind.annotation.PostMapping;
 
 @RestController
@@ -21,9 +26,14 @@ public class TodoController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Todo> CreateTodo(@RequestBody TodoDto todoDto) {
+    public ResponseEntity<TodoResponseDto> CreateTodo(@Valid @RequestBody TodoDto todoDto) {
         Todo todo = todoServices.create(todoDto);
-        return ResponseEntity.ok(todo);
+        UserDto usr = new UserDto(
+                todo.getCreatedBy().getEmail(),
+                todo.getCreatedBy().getFullName(),
+                todo.getCreatedBy().getRole());
+        TodoResponseDto dt = new TodoResponseDto(todo.getTask(), todo.getStatus(), todo.getCreatedAt(), usr);
+        return ResponseEntity.ok(dt);
 
     }
 
