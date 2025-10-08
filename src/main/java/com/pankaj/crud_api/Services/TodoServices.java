@@ -2,6 +2,7 @@ package com.pankaj.crud_api.Services;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
@@ -38,6 +39,12 @@ public class TodoServices {
                 .orElseThrow(() -> new RuntimeException("User Not Exists"));
         return todoRepository.findByCreatedBy(usr);
 
+    }
+
+    public String delete(UUID taskId) {
+        Todo todo = todoRepository.findById(taskId).orElseThrow(() -> new RuntimeException("Todo Not Exists"));
+        todoRepository.delete(todo);
+        return "Todo Deleted Successfully";
     }
 
 }

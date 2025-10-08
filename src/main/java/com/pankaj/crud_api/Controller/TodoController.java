@@ -3,13 +3,14 @@ package com.pankaj.crud_api.Controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pankaj.crud_api.Services.TodoServices;
+import com.pankaj.crud_api.dto.DeleteTodoDto;
+import com.pankaj.crud_api.dto.Message;
 import com.pankaj.crud_api.dto.TodoDto;
 import com.pankaj.crud_api.dto.TodoResponseDto;
 import com.pankaj.crud_api.dto.UserDto;
@@ -37,13 +38,14 @@ public class TodoController {
                 todo.getCreatedBy().getEmail(),
                 todo.getCreatedBy().getFullName(),
                 todo.getCreatedBy().getRole());
-        TodoResponseDto dt = new TodoResponseDto(todo.getTask(), todo.getStatus(), todo.getCreatedAt(), usr);
+        TodoResponseDto dt = new TodoResponseDto(todo.getId(), todo.getTask(), todo.getStatus(), todo.getCreatedAt(),
+                usr);
         return ResponseEntity.ok(dt);
 
     }
 
     @GetMapping("/get-all")
-    public ResponseEntity<List<TodoResponseDto>> getAllTodoByUser(@RequestParam Long userId) {
+    public ResponseEntity<List<TodoResponseDto>> getAllTodoByUser(@Valid @RequestParam Long userId) {
         List<Todo> todos = todoServices.get_all(userId);
 
         List<TodoResponseDto> responseList = todos.stream().map(todo -> {
@@ -52,6 +54,7 @@ public class TodoController {
                     todo.getCreatedBy().getFullName(),
                     todo.getCreatedBy().getRole());
             return new TodoResponseDto(
+                    todo.getId(),
                     todo.getTask(),
                     todo.getStatus(),
                     todo.getCreatedAt(),
@@ -59,6 +62,13 @@ public class TodoController {
         }).toList();
 
         return ResponseEntity.ok(responseList);
+    }
+
+    @PostMapping("/delete")
+    public ResponseEntity<Message> deletetodo(@RequestBody DeleteTodoDto todo) {
+        String msg = todoServices.delete(todo.taskId());
+        Message message = new Message(msg, 200);
+        return ResponseEntity.ok(message);
     }
 
 }
