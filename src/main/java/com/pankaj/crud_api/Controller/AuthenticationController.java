@@ -34,6 +34,8 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginDto loginUserDto) {
+        System.out.println(loginUserDto.getEmail());
+        System.out.println(loginUserDto.getPassword());
         User authenticatedUser = authenticationService.authenticate(loginUserDto);
 
         String jwtToken = jwtService.generateToken(authenticatedUser);
@@ -44,6 +46,8 @@ public class AuthenticationController {
         loginResponse.setEmail(authenticatedUser.getEmail());
         loginResponse.setUserId(authenticatedUser.getId());
         loginResponse.setFullName(authenticatedUser.getFullName());
+        loginResponse.setRole(authenticatedUser.getRole().name());
+        loginResponse.setStatus(200);
 
         return ResponseEntity.ok(loginResponse);
     }

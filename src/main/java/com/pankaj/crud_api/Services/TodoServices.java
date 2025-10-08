@@ -1,5 +1,6 @@
 package com.pankaj.crud_api.Services;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -29,6 +30,14 @@ public class TodoServices {
         todo.setCreatedBy(usr);
 
         return todoRepository.save(todo);
+    }
+
+    public List<Todo> get_all(Long userId) {
+
+        User usr = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User Not Exists"));
+        return todoRepository.findByCreatedBy(usr);
+
     }
 
 }
